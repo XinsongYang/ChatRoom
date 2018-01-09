@@ -1,0 +1,10 @@
+.room-card {
+    height: 600px;
+    margin-right: 30px;
+}
+
+.message-list {
+    height: 450px;
+    overflow-x:hidden; 
+    overflow-y:scroll;
+}
