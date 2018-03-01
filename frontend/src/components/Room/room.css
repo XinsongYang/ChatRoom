@@ -1,10 +1,23 @@
-.room-card {
-    height: 600px;
-    margin-right: 30px;
+.sider-item {
+    margin: 25px;
+}
+
+.room-container {
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+    padding: 20px;
 }
 
 .message-list {
-    height: 450px;
-    overflow-x:hidden; 
-    overflow-y:scroll;
+    flex: 1; 
+    overflow: auto;
+}
+
+.room-footer {
+
+}
+
+.input-button {
+    position: absolute;
 }

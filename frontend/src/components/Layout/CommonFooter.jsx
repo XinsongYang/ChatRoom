@@ -5,7 +5,7 @@ const {  Footer } = Layout
 function CommonFooter(props) {
     return (
         <Footer style={{ textAlign: 'center' }}>
-            Instant Chat Room by<a href="#">Xinsong</a> 
+            Instant Chat Room by <a href="#">Xinsong</a> 
         </Footer>
     )
 }

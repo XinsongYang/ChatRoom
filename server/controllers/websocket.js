@@ -7,7 +7,7 @@ function createMessage(type, user, data) {
         type: type,
         user: user,
         data: data,
-        time: new Date()
+        time: (new Date()).getTime()
     });
 }
 
@@ -39,11 +39,10 @@ module.exports = {
             });
             ctx.websocket.send(createMessage('list', user, users));
 
-            ctx.websocket.on('message', function (text) {
-                if (text && text.trim()) {
-                    let chatMessage = createMessage('chat', user, text.trim());
-                    broadcast(wss, chatMessage);
-                }
+            ctx.websocket.on('message', function (str) {
+                const received = JSON.parse(str);
+                const newMessage = createMessage(received.type, user, received.data);
+                broadcast(wss, newMessage);
             });
             ctx.websocket.on('close', function () {
                 let leftMessage = createMessage('left', user, `${user.username} left.`);

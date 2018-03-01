@@ -2,7 +2,8 @@ const path = require('path');
 const Koa = require('koa');
 const logger = require('koa-logger');
 const session = require('koa-session');
-const bodyParser = require('koa-bodyparser');
+// const bodyParser = require('koa-bodyparser');
+const koaBody = require('koa-body');
 const static = require('koa-static');
 const send = require('koa-send');
 const views = require('koa-views');
@@ -23,7 +24,8 @@ app.use(static(
     path.join(__dirname, './public')
 ));
 
-app.use(bodyParser());
+// app.use(bodyParser());
+app.use(koaBody({ multipart: true }));
 
 app.keys = [config.sessionKey];
 app.use(session({}, app));
