@@ -12,11 +12,17 @@ class InputBox extends Component {
             text: ""
         };
         this.onSend = this.onSend.bind(this);
+        this.onAt = this.onAt.bind(this);
     }
 
     onSend() {
         this.props.sendMessage("text", this.state.text);
         this.setState({text: ""});
+    }
+
+    onAt({key}) {
+        const newText = this.state.text + `@${key} `;
+        this.setState({text: newText});
     }
 
     render() {
@@ -25,6 +31,14 @@ class InputBox extends Component {
             <Menu.Item key="location">Location</Menu.Item>
             <Menu.Item key="file">File</Menu.Item>
             <Menu.Item key="photos">Photos</Menu.Item>
+          </Menu>
+        );
+        const userItems = this.props.users.map((user) =>
+            <Menu.Item key={user.username}>{user.username}</Menu.Item>
+        );
+        const userList = (
+          <Menu onClick={this.onAt}>
+            {userItems}
           </Menu>
         );
         
@@ -39,7 +53,9 @@ class InputBox extends Component {
                     onChange={e => this.setState({text: e.target.value})} 
                     onPressEnter={this.onSend}
                 />
-                <Button>@</Button>
+                <Dropdown overlay={userList} placement="topRight" trigger={['click']} >
+                    <Button>@</Button>
+                </Dropdown>
                 <Dropdown 
                     overlay={<Picker onClick={(emoji) => this.setState({text: this.state.text + emoji.native})}/>} 
                     placement="topRight" 

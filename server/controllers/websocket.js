@@ -25,12 +25,23 @@ module.exports = {
         const user = ctx.session.user;
         ctx.websocket.user = user;
 
+        // const sameUserClients = [];
+        // wss.clients.forEach(function(client) {
+        //     if (client.user.username === user.username) {
+        //         sameUserClients.push(client);
+        //     }
+        // });
+        // for (let i = 0; i < sameUserClients.length - 1; i++) {
+        //      await sameUserClients[i].close();
+        // }
+        
         ctx.websocket.on('error', function (err) {
             console.log('[WebSocket] error: ' + err);
         });
 
         if (user) {
             let joinMessage = createMessage('join', user, `${user.username} joined.`);
+            console.log("joined");
             broadcast(wss, joinMessage);
             
             let users = [];
@@ -49,7 +60,6 @@ module.exports = {
                 broadcast(wss, leftMessage);
                 console.log('[WebSocket] closed');
             });
-
         } else {
             ctx.websocket.close(4001, 'Invalid user');
             console.log("[WebSocket] invalid user");

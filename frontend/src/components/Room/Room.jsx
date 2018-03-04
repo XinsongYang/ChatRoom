@@ -22,6 +22,7 @@ class Room extends Component {
         }
 
         this.addMessage = this.addMessage.bind(this);
+        this.removeMessage = this.removeMessage.bind(this);
         this.onMessage = this.onMessage.bind(this);
         this.onClose = this.onClose.bind(this);
         this.onError = this.onError.bind(this);
@@ -45,6 +46,11 @@ class Room extends Component {
         this.setState({ messages });
     }
 
+    removeMessage(id) {
+        let messages = this.state.messages.filter(message => message.id !== id);
+        this.setState({ messages });
+    }
+
     onMessage(event) {
         const message = JSON.parse(event.data);
         if (message.type === 'list') {
@@ -52,24 +58,26 @@ class Room extends Component {
                 users: message.data
             });
         } else if (message.type === 'join') {
-            let users = this.state.users.concat([message.user]);
-            this.setState({ users });
             if (message.user.username !== this.props.user.username) {
+                let users = this.state.users.concat([message.user]);
+                this.setState({ users });
                 notification.open({
                     message: message.data
                 });
             }
             // this.addMessage(message);
         } else if (message.type === 'left') {
-            let users = this.state.users.slice();
-            users = users.filter(user => user.username !== message.user.username);
-            this.setState({ users });
             if (message.user.username !== this.props.user.username) {
+                let users = this.state.users.slice();
+                users = users.filter(user => user.username !== message.user.username);
+                this.setState({ users });
                 notification.open({
                     message: message.data
                 });
             }
             // this.addMessage(message);
+        } else if (message.type === 'delete') {
+            this.removeMessage(message.data);
         } else {
             this.addMessage(message);
         }
@@ -106,14 +114,18 @@ class Room extends Component {
                     <Content>
                         <div className="room-container">
                             <div className="message-list">
-                                <Messages messages={this.state.messages} />
+                                <Messages 
+                                    user={this.props.user} 
+                                    messages={this.state.messages} 
+                                    sendMessage={this.sendMessage}
+                                />
                             </div>
                             <div className="room-footer">
-                                <InputBox 
+                                <InputBox
+                                    users={this.state.users} 
                                     setModal={(key) => {this.setState({modal: key})}}
                                     sendMessage={this.sendMessage} 
                                 />
-                                {/*<Search enterButton="Send" onSearch={text => this.state.ws.send(text)}/>*/}
                             </div>   
                         </div>        
                     </Content>
