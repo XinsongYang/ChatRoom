@@ -47,7 +47,8 @@ class InputBox extends Component {
                 <Dropdown overlay={addMenu} placement="topLeft" trigger={['click']} >
                     <Button><Icon type="plus" /></Button>
                 </Dropdown>
-                <Input 
+                <Input
+                    autosize={{ minRows: 1, maxRows: 6 }} 
                     style={{ width: "80%" }} 
                     value ={this.state.text} 
                     onChange={e => this.setState({text: e.target.value})} 

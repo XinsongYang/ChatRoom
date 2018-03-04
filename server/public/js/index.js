@@ -48751,6 +48751,11 @@ var Room = function (_Component) {
                 this.removeMessage(message.data);
             } else {
                 this.addMessage(message);
+                if (this.isAt(message.data)) {
+                    __WEBPACK_IMPORTED_MODULE_4_antd_lib_notification___default.a.open({
+                        message: message.user.username + ' is @ you.'
+                    });
+                }
             }
         }
     }, {
@@ -48772,6 +48777,24 @@ var Room = function (_Component) {
         value: function sendMessage(type, data) {
             var message = __WEBPACK_IMPORTED_MODULE_2_babel_runtime_core_js_json_stringify___default()({ type: type, data: data });
             this.state.ws.send(message);
+        }
+    }, {
+        key: 'isAt',
+        value: function isAt(str) {
+            for (var i = 0; i < str.length; i++) {
+                if (str.charAt(i) === '@') {
+                    i++;
+                    var username = "";
+                    while (i < str.length && str.charAt(i) !== ' ') {
+                        username += str.charAt(i);
+                        i++;
+                    }
+                    if (username === this.props.user.username) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }, {
         key: 'render',
@@ -50093,18 +50116,41 @@ function RoomSider(props) {
 
 
 function Messages(props) {
+
+    function parseAt(str) {
+        var content = [];
+        var subStr = "";
+        for (var i = 0; i < str.length; i++) {
+            if (str.charAt(i) === '@') {
+                if (subStr) {
+                    content.push(subStr);
+                    subStr = "";
+                }
+                var username = "";
+                while (i < str.length && str.charAt(i) !== ' ' && str.charAt(i) !== '\n') {
+                    username += str.charAt(i);
+                    i++;
+                }
+                content.push(__WEBPACK_IMPORTED_MODULE_6_react___default.a.createElement(
+                    'a',
+                    null,
+                    username + ' '
+                ));
+            } else {
+                subStr += str.charAt(i);
+            }
+        }
+        if (subStr) {
+            content.push(subStr);
+            subStr = "";
+        }
+        return content;
+    }
+
     var messageItems = props.messages.map(function (message) {
         var content = null;
         if (message.type === "text") {
-            content = message.data;
-            // const splited = message.data.split(" ");
-            // splited.forEach(text => {
-            //     if (text.charAt(0) === "@") {
-            //         content.push(<span style={{color: "#00f"}}>{text + " "}</span>);
-            //     } else {
-            //         content.push(text);
-            //     }
-            // });
+            content = parseAt(message.data);
         } else if (message.type === "image") {
             content = __WEBPACK_IMPORTED_MODULE_6_react___default.a.createElement(
                 'a',
@@ -50546,6 +50592,7 @@ var InputBox = function (_Component) {
                     )
                 ),
                 __WEBPACK_IMPORTED_MODULE_15_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_14_antd_lib_input___default.a, {
+                    autosize: { minRows: 1, maxRows: 6 },
                     style: { width: "80%" },
                     value: this.state.text,
                     onChange: function onChange(e) {

@@ -80,6 +80,11 @@ class Room extends Component {
             this.removeMessage(message.data);
         } else {
             this.addMessage(message);
+            if (this.isAt(message.data)) {
+                notification.open({
+                    message: `${message.user.username} is @ you.`
+                });
+            }
         }
     }
 
@@ -98,6 +103,23 @@ class Room extends Component {
     sendMessage(type, data) {
         const message = JSON.stringify({ type, data});
         this.state.ws.send(message);
+    }
+
+    isAt(str) {
+        for (let i = 0; i < str.length; i++) {
+            if (str.charAt(i) === '@') {
+                i++;        
+                let username = "";
+                while (i < str.length && str.charAt(i) !== ' ') {
+                    username += str.charAt(i);
+                    i++;
+                }
+                if (username === this.props.user.username) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     render() {

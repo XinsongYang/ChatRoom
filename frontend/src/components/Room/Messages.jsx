@@ -1,20 +1,38 @@
 import React from 'react';
-import { List, Avatar, Icon, Button } from 'antd';
+import { List, Avatar, Icon, Button, notification } from 'antd';
 
 function Messages(props) {
+    
+    function parseAt(str) {
+        let content = [];
+        let subStr = "";
+        for (let i = 0; i < str.length; i++) {
+            if (str.charAt(i) === '@') {
+                if (subStr) {
+                    content.push(subStr);
+                    subStr = "";
+                }                
+                let username = "";
+                while (i < str.length && str.charAt(i) !== ' ' && str.charAt(i) !== '\n') {
+                    username += str.charAt(i);
+                    i++;
+                }
+                content.push(<a>{username + ' '}</a>);
+            } else {
+                subStr += str.charAt(i);
+            }
+        }
+        if (subStr) {
+            content.push(subStr);
+            subStr = "";
+        }
+        return content;
+    }
+
     const messageItems = props.messages.map((message) => {
         let content = null;
         if (message.type === "text") {
-            content = message.data;
-            // const splited = message.data.split(" ");
-            // splited.forEach(text => {
-            //     if (text.charAt(0) === "@") {
-            //         content.push(<span style={{color: "#00f"}}>{text + " "}</span>);
-            //     } else {
-            //         content.push(text);
-            //     }
-            // });
-            
+            content = parseAt(message.data);
         } else if (message.type === "image") {
             content = <a href={message.data} target="_blank"><img style={{height: "100px"}} src={message.data} alt="photo"/></a>
         }
